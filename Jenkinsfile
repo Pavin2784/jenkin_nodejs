@@ -4,7 +4,6 @@ pipeline {
 
     environment {
         IMAGE = "pavinb/node"
-        TAG   = "v${BUILD_NUMBER}"
     }
 
     stages {
@@ -18,7 +17,7 @@ pipeline {
         stage('Build Image') {
             steps {
                 sh '''
-                    docker build -t ${IMAGE}:${TAG} ./app
+                    docker build -t ${IMAGE}:${BUILD_NUMBER} ./app
                 '''
             }
         }
@@ -44,7 +43,7 @@ pipeline {
         stage('Push Image') {
             steps {
                 sh '''
-                    docker push ${IMAGE}:${TAG}
+                    docker push ${IMAGE}:${BUILD_NUMBER}
                 '''
             }
         }
@@ -80,7 +79,7 @@ pipeline {
             steps {
                 sh '''
                     kubectl set image deployment/node-deployment \
-                        node=${IMAGE}:${TAG}
+                        node=${IMAGE}:${BUILD_NUMBER}
                 '''
             }
         }
@@ -92,16 +91,6 @@ pipeline {
                         --timeout=5m
                 '''
             }
-        }
-    }
-
-    post {
-        success {
-            echo "Deployment successful: ${IMAGE}:${TAG}"
-        }
-
-        failure {
-            echo "Deployment failed"
         }
     }
 }
