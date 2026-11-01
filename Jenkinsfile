@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE = "pavinb/node"
+        IMAGE = 'pavinb/node'
     }
 
     stages {
