@@ -53,7 +53,7 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(
-                        credentialsId: 'node-db',
+                        credentialsId: 'mysql',
                         usernameVariable: 'DB_USER',
                         passwordVariable: 'DB_PASS'
                     )
