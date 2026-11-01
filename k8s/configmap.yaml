@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-config
+data:
+  DB_HOST: "172.31.15.85"
+  DB_NAME: "node"

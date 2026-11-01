@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Name List App</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        input, button { margin: 5px; padding: 10px; }
+        table { margin: 20px auto; border-collapse: collapse; width: 50%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <h1>Name List Application</h1>
+    <input type="text" id="nameInput" placeholder="Enter a name">
+    <button onclick="addName()">Add Name</button>
+
+    <h2>Name List</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="nameTable"></tbody>
+    </table>
+
+    <script>
+        async function fetchNames() {
+            const response = await fetch('/names');
+            const names = await response.json();
+            const table = document.getElementById('nameTable');
+            table.innerHTML = names.map(n => `
+                <tr>
+                    <td>${n.id}</td>
+                    <td><input type="text" value="${n.name}" id="name-${n.id}"></td>
+                    <td>
+                        <button onclick="updateName(${n.id})">Update</button>
+                        <button onclick="deleteName(${n.id})">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function addName() {
+            const name = document.getElementById('nameInput').value;
+            if (!name) return alert('Name is required');
+            await fetch('/names', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name })
+            });
+            document.getElementById('nameInput').value = '';
+            fetchNames();
+        }
+
+        async function updateName(id) {
+            const name = document.getElementById(`name-${id}`).value;
+            if (!name) return alert('Name is required');
+            await fetch(`/names/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name })
+            });
+            fetchNames();
+        }
+
+        async function deleteName(id) {
+            if (!confirm('Are you sure?')) return;
+            await fetch(`/names/${id}`, { method: 'DELETE' });
+            fetchNames();
+        }
+
+        fetchNames();
+    </script>
+</body>
+</html>
+
